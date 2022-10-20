@@ -1,0 +1,57 @@
+{
+	"editor.cursorBlinking": "solid",
+	"editor.wordWrap": "on",
+	"editor.wordWrapColumn": 80,
+	"editor.wrappingIndent": "same",
+	"editor.detectIndentation": false,
+	"editor.insertSpaces": false,
+	"editor.tabSize": 2,
+	"editor.defaultFormatter": "James-Yu.latex-workshop",
+	// "telemetry.enableCrashReporter": false,
+	"telemetry.enableTelemetry": false,
+	"latex-workshop.message.badbox.show": false,
+	"latex-workshop.latex.recipe.default": "latexmk (xelatex)",
+    "latex-workshop.latex.tools": [
+        {
+            "name": "xelatexmk",
+            "command": "latexmk",
+            "args": [
+                "-xelatex",
+                "-outdir=out",
+                "main.tex"
+            ]
+        }
+    ],
+    "latex-workshop.latex.recipes": [
+        {
+            "name": "latexmk (xelatex)",
+            "tools": [
+                "xelatexmk"
+            ]
+        }
+    ],
+	"files.exclude": {
+		"**/.git": true,
+		"**/.svn": true,
+		"**/.hg": true,
+		"**/CVS": true,
+		"**/.DS_Store": true,
+		"*.aux": true,
+		"*/*.aux": true,
+		"*.lof": true,
+		"*.log": true,
+		"*.lol": true,
+		"*.lot": true,
+		"*.fls": true,
+		"*.fdb_latexmk": true,
+		"*.nlo": true,
+		"*.out": true,
+		"*.toc": true,
+		"*.fmt": true,
+		"*.fot": true,
+		"*.cb": true,
+		"*.cb2": true,
+		".*.lb": true,
+		"*.*.gz":true,
+	}
+}
