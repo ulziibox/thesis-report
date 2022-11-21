@@ -11,7 +11,25 @@
 	\label{fig:architecture}
 \end{figure}
 
-Хэрэглэгч талаас компьютер, гар утасны веб хөтчийг ашиглаж HTTP холболтоор хүсэлт явуулж, сервер талаас өгөгдлийн санг ашиглан REST API бэлдэн эргээд хэрэглэгч рүү HTTP холболтоор хүсэлтийн хариуг өгөх зарчмаар ажиллана.
+Уг архитектур нь хэрэглэгч талаас компьютер, гар утасны веб хөтчийг ашиглаж HTTP холболтоор хүсэлт явуулж, сервер талаас өгөгдлийн санг ашиглан REST API бэлдэн эргээд хэрэглэгч рүү HTTP холболтоор хүсэлтийн хариуг өгөх зарчмаар ажиллана.
+
+\clearpage
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=15cm]{images/imp-architecture.png}
+	\caption{Хэрэгжүүлэх гэж буй системийн архитектур}
+	\label{fig:imp-architecture}
+\end{figure}
+
+Front-end болон Back-end хэсгээ Next.js дээрээ хийх буюу fullstack хөгжүүлэлт хийгдэнэ. 
+
+\begin{itemize}
+	\item Client талаас сервер рүү интернэт ашиглан HTTPS холболтоор өгөгдлөө дамжуулна
+	\item Сервер дээр Prisma ORM-г ашиглан өгөгдлийн сангаа удирдана
+	\item Хэрэглэгчээс орж ирсэн URL-г авч сервер нь гуравдагч сайтын мэдээллийг авахаар HTTPS холболтоор хүсэлт илгээн хариуд нь тухайн сайтын Open Graph Protocol дахь meta data-г авна.
+\end{itemize}
+
 
 \pagebreak
 \section{Ажлын явцын диаграм}
@@ -24,7 +42,7 @@
 	\label{fig:usecase}
 \end{figure}
 
-\subsection{Ажлын явцын диаграмын тайлбар}
+\textbf{Ажлын явцын диаграмын тайлбар}
 
 \begin{itemize}
 	\item \textbf{Нэвтрэх -} Бүртгэлтэй хэрэглэгч өөрийн бүртгүүлсэн имэйл хаягаараа нэвтрэх, нууц үгээ сэргээх
@@ -40,17 +58,161 @@
 \end{itemize}
 
 \pagebreak
-\section{Өгөгдлийн сангийн диаграм}
+\section{UX/UI дизайн}
+
+Өмнөх бүлэгт хийсэн UX судалгаан дээрээ үндэслэж User Experience болон User Interface загварыг High Fidelity түвшинд эцэслэж гаргасан ба гаргасан дизайнаа хэрэглэгчээр туршиулж тодорхой үр дүнгүүдэд хүрч чадсан. Үүнд: 
+
+\begin{itemize}
+	\item Хэрэглэгчийн шаардлагыг бүрэн ойлгож, хэрэглэгч төвтэй дизайн гаргасан
+	\item Тусдаа бүлэг ажил болгон хийснээр интерфейс загвартаа анхаарч шинэлэг, ашиглахад хялбар хэрэглэгчийн интерфейс загвар зурсан
+	\item Хөгжүүлэлтийн шатнаас өмнө бүх хэрэглэгчийн интерфейсүүд дизайн системийн дагуу гарч дууссан тул front-end хөгжүүлэлтийн явцыг ихээр хурдлуулсан
+	\item Интерфейсийн дагуу front-end код явагдах тул back-end код дээр dummy датагаар хөгжүүлж явах, төлөвлөх үе шат хялбар болсон. Front-end хэсэгтэй зөрөх магадлал багассан гэж ойлгож болно.
+\end{itemize}
+
+Одоо UX шаардлагын дагуу ажилласан процессоо богиноор тайлбарлая.
+
+\subsection{User Persona тодорхойлж эхний загварыг бүтээсэн нь}
+
+Шаардлагын дагуу хоёр хүнийг сонгон авч тэдгээр хүмүүсээс хэрэгтэй мэдээллүүдээ нэгтгэсэн ба доорхи зургаар илэрхийллээ.
+
+\textbf{User Persona 1 - Болорчулуун}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=15cm]{images/persona1-bolorchuluun.png}
+	\caption{Persona 1 - Болорчулууны мэдээлэл}
+	\label{fig:persona1}
+\end{figure}
+
+\textbf{Use Case}
+
+\begin{itemize}
+	\item Өглөө ажил дээрээ эхний 20 минут мэргэжилтэйгээ холбоотой нийтлэлүүд унших дуртай
+	\item Веб хөтөч дээрээ таалагдсан эсвэл дараа нь унших ёстой холбоосуудаа bookmark хийж хадгалж авдаг боловч зөвхөн ажлын компьютер дээр л тэдгээр холбоос маань хадгалагддаг. Өөр рүүгээ веб холбоосоо цуглуулж явуулахаас залхуу хүрдэг
+\end{itemize}
+
+\textbf{User Persona 2 - Шүрэнцэцэгийн мэдээлэл}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=15cm]{images/persona2-shurentsetseg.png}
+	\caption{Persona 2 - Шүрэнцэцэг}
+	\label{fig:persona2}
+\end{figure}
+
+\textbf{Use Case}
+
+\begin{itemize}
+	\item Миний хувьд мэдээгээ бэлтгэхдээ дийлэнхдээ интернет дэх эх сурвалжуудаас бэлтгэдэг. Нэг асуудал байдаг маань эх сурвалж авдаг хэдхэн вэбсайт дунд л эргэлдэж байгаа.
+	\item Олсон мэдээллүүдээ хамт ажиллаж буй хүмүүс рүүгээ явуулахдаа Telegram ашиглан нэг нэгээр нь хуулж тавин явуулдаг. Хүн болгон руу ингэж явуулах нь надад төвөгтэй байдаг
+\end{itemize}
+
+\textbf{Эхний Wireframe загварыг гаргаж Prototype хувилбар бүтээсэн нь}
+
+Хамгийн эхэнд нийт 8 хуудсын Wireframe загварыг хэрэглэгчийн Use Case дээрээ тулгуурлан зурж, дизайн дээрх бүх элементүүдээ хооронд нь холбон Prototype \footnote{Prototype хувилбарыг туршиж үзэх \url{https://www.figma.com/proto/EL2nOGmToBRVxHNuZwH661/Draft?}} хувилбар гаргаж, сонгож авсан хоёр хэрэглэгч дээрээ Usability туршилт хийхэд бэлэн болголоо.
+
+Нийт зурсан 8 хуудсаас вебийн гол процессийг илэрхийлэх 4 зургийг орууллаа. Бусад хэсгийг хавсралтаас \footnote{Зурсан интерфейс дизайн \url{https://www.figma.com/file/EL2nOGmToBRVxHNuZwH661}} үзэх боломжтой
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=10cm]{images/interfaces/v1/01-home.png}
+	\caption{Нүүр хуудас}
+	\label{fig:interface-v1-01}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=10cm]{images/interfaces/v1/02-interface-createlink.png}
+	\caption{Холбоосуудаа оруулах форм}
+	\label{fig:interface-v1-02}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=10cm]{images/interfaces/v1/03-publis.png}
+	\caption{Оруулсан холбоосуудыг нийтлэсний дараах хуудас}
+	\label{fig:interface-v1-03}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=10cm]{images/interfaces/v1/04-link-list.png}
+	\caption{Оруулсан нийтлэл бусад хүмүүст харагдах байдал}
+	\label{fig:interface-v1-04}
+\end{figure}
+
+\clearpage
+\textbf{Prototype хувилбар дээрээ Usability туршилт хийсэн нь}
+
+Дараа нь Prototype хувилбар дээрээ Usability буюу хэрэглэхэд тухтай байдлын туршилтыг сонгож авсан хоёр хэрэглэгч дээрээ хийлгэж уг гаргасан дизайн дээрх үүссэн асуудлыг тодорхойлж, хэрэглэгчээс санал хүсэлтийг аван дараагийн гаргах дизайныхаа ерөнхий шаардлагуудыг тодорхойлов. Үүнээс дурдвал:
+
+\begin{itemize}
+	\item UI загварын хувьд концептийг дахин сайжруулах
+	\item Бусад хүмүүсийн оруулсан холбоосыг нийтэд нь харуулах
+	\item Оруулж буй холбоосыг ангилалтай байлгах
+	\item Платформ дээр бүртгэлтэй бусад хэрэглэгчдийг харуулах
+\end{itemize}
+
+Иймд уг шаардлага дээрээ үндэслэн эцсийн байдлаар вебийнхээ UX/UI дизайныг гаргах шаардлагатай.
+
+\textbf{Redesign буюу зурсан дизайнаа дахин сайжруулсан нь}
+
+UX/UI гүйцэтгэлийн хамгийн сүүлийн шатанд нийт 12 хуудас дизайныг \footnote{UX/UI дизайны сүүлийн хувилбар \url{https://www.figma.com/proto/EL2nOGmToBRVxHNuZwH661}} холбож зурсан ба өмнөх дизайны процесстой адилаар Prototype хувилбар гаргаж эцсийн хэрэглэгчдээрээ Usability туршилтыг хийж дараагийн шат болох код хөгжүүлэлтийн шатыг эхлүүлэхэд бэлэн боллоо. Нийт зурсан хуудсаасаа 6 хуудсыг онцлон харуулж, User Expierence дизайныхаа шийдлийг тайлбарлалаа. Бусад зурсан хуудсыг доор байгаа хавсралтаас харах боломжтой. 
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=10cm]{images/interfaces/components.png}
+	\caption{Ашигласан компонентуудын жишээ}
+	\label{fig:component}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=10cm]{images/interfaces/home-screen.png}
+	\caption{Нэвтэрсний дараах нүүр хуудас}
+	\label{fig:homescreen}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=10cm]{images/interfaces/topics.png}
+	\caption{Бүх холбоосуудыг төрлөөр нь шүүж харах хуудас}
+	\label{fig:topics}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=10cm]{images/interfaces/people.png}
+	\caption{Хэрэглэгчдийн жагсаалт харагдах хуудас}
+	\label{fig:people}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=10cm]{images/interfaces/profile.png}
+	\caption{Бусдын профайлыг харах хуудас}
+	\label{fig:profile}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=10cm]{images/interfaces/grouped-link.png}
+	\caption{Бүлэг холбоос доторх холбоосуудыг харах хуудас}
+	\label{fig:grouped}
+\end{figure}
+
+\clearpage
+\section{Өгөгдлийн сан}
 
 \subsection{Өгөгдлийн сангийн диаграм}
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=15cm]{images/erdiagram.png}
-	\caption{ER диаграм}
+	\caption{Системийн RD Schema}
 	\label{fig:erd}
 \end{figure}
 
-\subsection{Өгөгдлийн сангийн хүснэгтүүдийн тайлбар}
+\textbf{Өгөгдлийн сангийн хүснэгтүүдийн тайлбар}
 
 \begin{table}[h]
 	\caption{user хүснэгт}
@@ -161,66 +323,6 @@
 
 
 \clearpage
-\section{Хэрэглэгчийн интерфейс дизайн}
-
-Өмнөх бүлэгт хийсэн UX судалгаан дээрээ үндэслэж User Experience болон User Interface загварыг High Fidelity түвшинд эцэслэж гаргасан ба гаргасан дизайнаа хэрэглэгчээр туршиулж тодорхой үр дүнгүүдэд хүрч чадсан. Үүнд: 
-
-\begin{itemize}
-	\item Хэрэглэгчийн шаардлагыг бүрэн ойлгож, хэрэглэгч суурьтай дизайн гаргасан
-	\item Тусдаа бүлэг ажил болгон хийснээр интерфейс загвартаа анхаарч шинэлэг, ойлгомжтой интерфейс бүтээсэн
-	\item Хөгжүүлэлтийн шатнаас өмнө бүх интерфейсүүд дизайн системийн дагуу гарч дууссан тул front-end хөгжүүлэлтийн явцыг илт хурдлуулсан
-	\item Интерфейсийн дагуу front-end код явагдах тул back-end код дээр dummy датагаар хөгжүүлж явах, төлөвлөх үе шат хялбар болсон. Front-end хэсэгтэй зөрөх магадлал багассан гэж ойлгож болно.
-\end{itemize}
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=15cm]{images/interfaces/components.png}
-	\caption{Ашигласан компонентуудын жишээ}
-	\label{fig:component}
-\end{figure}
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=15cm]{images/interfaces/home-screen.png}
-	\caption{Нэвтэрсний дараах нүүр хуудас}
-	\label{fig:homescreen}
-\end{figure}
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=15cm]{images/interfaces/bookmark.png}
-	\caption{Хадгалсан холбоосуудын жагсаалт}
-	\label{fig:bookmark}
-\end{figure}
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=15cm]{images/interfaces/topics.png}
-	\caption{Бүх холбоосуудыг төрлөөр нь шүүж харах хуудас}
-	\label{fig:topics}
-\end{figure}
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=15cm]{images/interfaces/people.png}
-	\caption{Хэрэглэгчдийн жагсаалт харагдах хуудас}
-	\label{fig:people}
-\end{figure}
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=15cm]{images/interfaces/profile.png}
-	\caption{Бусдын профайлыг харах хуудас}
-	\label{fig:profile}
-\end{figure}
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=15cm]{images/interfaces/grouped-link.png}
-	\caption{Бүлэг холбоос доторх холбоосуудыг харах хуудас}
-	\label{fig:grouped}
-\end{figure}
-
 
 
 
