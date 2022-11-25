@@ -1,2 +1,453 @@
 \appendix
+\renewcommand\bibname{Хавсралт}
 \addcontentsline{toc}{part}{ХАВСРАЛТ}
+
+\chapter{Prisma модел}
+\label{appendix:prisma-model}
+
+\begin{lstlisting}[language=Javascript, frame=single]
+	generator client {
+		provider = "prisma-client-js"
+		previewFeatures = ["interactiveTransactions"]
+	}
+	
+	datasource db {
+		provider = "postgresql"
+		url      = env("DATABASE_URL")
+		shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+	}
+	
+	model User {
+		id         Int    @id @default(autoincrement())
+		username   String
+		email      String
+		password   String
+		profileImg String
+	
+		followers Follows[] @relation("following")
+		following Follows[] @relation("follower")
+		votes Votes[] @relation("userVotes")
+	
+		posts Post[]
+		createdAt DateTime @default(now())
+		updatedAt DateTime @updatedAt
+	}
+	
+	model Post {
+		id       Int    @id @default(autoincrement())
+		ogUrl    String
+		ogTitle  String
+		ogImage  String
+		authorId Int
+		author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+		groupId  Int?
+		group    Group? @relation(fields: [groupId], references: [id])
+	
+		votes Votes[] @relation("postVotes")
+	
+		tags       Tag[]
+		categories Category[]
+	
+		createdAt DateTime @default(now())
+		updatedAt DateTime @updatedAt
+	}
+	
+	model Tag {
+		id   Int    @id @default(autoincrement())
+		name String
+	
+		posts Post[]
+	
+		createdAt DateTime @default(now())
+		updatedAt DateTime @updatedAt
+	}
+	
+	model Category {
+		id   Int    @id @default(autoincrement())
+		name String
+	
+		posts Post[]
+	
+		createdAt DateTime @default(now())
+		updatedAt DateTime @updatedAt
+	}
+	
+	model Group {
+		id          Int    @id @default(autoincrement())
+		title       String
+		description String
+	
+		createdAt DateTime @default(now())
+		updatedAt DateTime @updatedAt
+		Post      Post[]
+	}
+	
+	model Follows {
+		follower    User @relation("follower", fields: [followerId], references: [id])
+		followerId  Int
+		following   User @relation("following", fields: [followingId], references: [id])
+		followingId Int
+	
+		@@id([followerId, followingId])
+	
+		createdAt DateTime @default(now())
+	}
+	
+	model Votes {
+		id          Int    @id @default(autoincrement())
+		user User @relation("userVotes",fields: [userId], references: [id])
+		userId Int
+		post Post @relation("postVotes",fields:[postId],references:[id])
+		postId Int
+		vote String
+	
+		createdAt DateTime @default(now())
+		updatedAt DateTime @updatedAt
+		deletedAt DateTime?
+	}
+\end{lstlisting}
+
+\chapter{Prisma Client ашиглах}
+\label{appendix:prisma-client}
+
+\begin{lstlisting}[language=Javascript, frame=single]
+	import { PrismaClient } from '@prisma/client'
+
+	let prisma: PrismaClient
+	
+	if (process.env.NODE_ENV === 'production') {
+		prisma = new PrismaClient()
+	} else {
+		if (!global.prisma) {
+			global.prisma = new PrismaClient()
+		}
+		prisma = global.prisma
+	}
+	
+	export default prisma
+\end{lstlisting}
+
+\chapter{Next.js дээр remote домайн зөвшөөрөх}
+\label{appendix:next-config}
+
+\begin{lstlisting}[language=Javascript, frame=single]
+	@type {import('next').NextConfig}
+	const nextConfig = {
+		reactStrictMode: true,
+		images: {
+			remotePatterns: [
+				{
+					protocol: "https",
+					hostname: "**",
+				},
+				{
+					protocol: "http",
+					hostname: "**",
+				},
+			],
+		},
+	};
+	
+	module.exports = nextConfig;
+	
+\end{lstlisting}
+
+\chapter{Tailwind custom-class үүсгэх}
+\label{appendix:custom-class}
+
+\begin{lstlisting}[language=Javascript, frame=single]
+	@tailwind base;
+	@tailwind components;
+	@tailwind utilities;
+	
+	@layer components {
+		.sidebar-icon {
+			@apply flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg transition-all duration-75 hover:border-2 hover:border-primary;
+		}
+	
+		.sidebar-icon-active {
+			@apply flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg border-2 border-primary bg-white hover:bg-gray100;
+		}
+	
+		.tooltip {
+			@apply absolute left-14 z-10 m-2 w-auto min-w-max origin-left scale-0 rounded-md bg-gray-900 p-2 text-xs font-bold text-white shadow-md transition-all duration-100;
+		}
+	
+		.vote-btn {
+			@apply grid h-8 w-8 cursor-pointer place-content-center rounded-lg border border-gray200 bg-white hover:border-gray100;
+		}
+	
+		.bar {
+			@apply z-0 my-1 flex justify-between px-5 py-3 text-sm text-description transition-all duration-100 hover:text-black;
+		}
+	
+		.chip {
+			@apply flex h-5 items-center rounded-md border border-gray100 bg-gray300 px-1 text-xs;
+		}
+	
+		.bar-active {
+			@apply relative z-0 my-1 flex justify-between px-5 py-3 text-sm transition-all duration-100 hover:text-black;
+		}
+	
+		.chip-active {
+			@apply flex h-5 items-center rounded-md bg-black px-1 text-xs text-white;
+		}
+	}
+	
+\end{lstlisting}
+
+\chapter{Хэрэглэгчийн мэдээллийг гаргах endpoint}
+\label{appendix:user-post-endpoint}
+
+\begin{lstlisting}[language=Javascript, frame=single]
+	import { NextApiRequest, NextApiResponse } from "next";
+	import prisma from "../../../../lib/prisma";
+	
+	export default async function handle(req: NextApiRequest, res: NextApiResponse) {
+		try {
+			
+			const uId = parseInt(req.query.id as string, 10)
+			
+			const resultDB = await prisma.user.findUnique({
+				where: {
+					id: uId
+				},
+				select: {
+					id: true,
+					username: true,
+					profileImg: true,
+					posts: {
+						select: {
+							id: true,
+							ogUrl: true,
+							ogTitle: true,
+							ogImage: true,
+							tags: true,
+							group: true,
+						},
+					}
+				}
+			})
+	
+			res.status(200).json(resultDB);
+		} catch (err) {
+			res.status(403).json({ err: "Error occured"})
+		}
+	}
+\end{lstlisting}
+
+\chapter{Холбоос дээр Vote өгөх endpoint}
+\label{appendix:user-vote-endpoint}
+
+\begin{lstlisting}[language=Javascript, frame=single]
+	import {NextApiRequest, NextApiResponse} from "next";
+	import {Prisma} from "@prisma/client";
+	import {instanceOf} from "prop-types";
+	import prisma from "../../../../lib/prisma";
+	
+	
+	export default async function handle(req: NextApiRequest, res: NextApiResponse) {
+			const requestMethod = req.method
+			switch (requestMethod){
+					case 'GET':
+							let following;
+							try{
+									let postId = parseInt(req.query.id as string, 10)
+									const totalVote = await VotesTotal(postId)
+									res.status(200).json({totalVote})
+							} catch (e) {
+									if (e instanceof Prisma.PrismaClientKnownRequestError) {
+											if (e.code === 'P2002') {
+													res.json({totalVote:0})
+											}else{
+													res.status(400).json(e)
+											}
+									} else {
+											console.log(e)
+											res.status(500).json({message: "something wrong try again some time later"})
+									}
+							}
+							break
+					case 'POST':
+							if (req.body.vote!='up'&&req.body.vote!='down'){
+									res.status(400)
+							}
+							let postId = parseInt(req.query.id as string, 10)
+							let userId = 1
+							let vote = req.body.vote
+							await Vote(userId,postId,vote)
+							const totalVote = await VotesTotal(postId)
+							res.status(200).json({totalVote})
+							break
+	
+					default: res.status(404)
+			}
+	}
+	
+	async function Vote(userId:number, postId:number, vote:string){
+			return await prisma.$transaction(async (tx) => {
+					try {
+				const haveVotes = await tx.votes.findFirst({
+						where:{
+								userId,
+								postId,
+								deletedAt:null
+						},
+						orderBy:{
+						id:'desc'
+						}
+				})
+					if (haveVotes?.vote==vote){
+							return await tx.votes.updateMany({
+									where:{
+											userId,
+											postId,
+											deletedAt:null
+									},
+									data:{
+											deletedAt: new Date()
+									}
+							})
+					}else{
+							await  tx.votes.updateMany({
+									where:{
+											userId,
+											postId,
+											deletedAt:null
+									},
+									data:{
+											deletedAt: new Date()
+									}
+							})
+						 return await tx.votes.create({
+									data:{
+											user:{
+													connect:{
+															id: userId
+													}
+											},
+											post: {
+													connect:{
+															id: postId
+													}
+											},
+											deletedAt: null,
+											vote,
+									}
+							})
+					}
+					}catch (e) {
+							if (e instanceof Prisma.PrismaClientKnownRequestError && e.code == 'P2002') {
+									return await tx.votes.create({
+											data:{
+													user:{
+															connect:{
+																	id: userId
+															}
+													},
+													post: {
+															connect:{
+																	id: postId
+															}
+													},
+													deletedAt: null,
+													vote,
+											}
+									})
+							}else{
+									throw e
+							}
+					}
+					return 1
+		})
+	}
+	
+	export function VotesTotal(postId:number){
+	
+			return  prisma.$transaction(async (tx) => {
+					const totalUp = await tx.votes.count({
+							where:{
+									postId,
+									deletedAt:null,
+									vote: 'up'
+							}
+					})
+	
+					const totalDown = await tx.votes.count({
+							where:{
+									postId,
+									deletedAt:null,
+									vote: 'down'
+							}
+					})
+	
+					return totalUp-totalDown
+			})
+	}
+	
+	async function getLastVote(userID, postID){
+			const lastVote = prisma.votes.findFirst({
+					where:{
+							userId: userID,
+							post: postID,
+							deletedAt:null
+					}
+			})
+			return lastVote
+	}
+	
+	async function DeletePreviousVotes(userId, postId){
+			const res= await prisma.votes.updateMany({
+							where:{
+									userId,
+									postId
+							},
+							data:{
+									deletedAt: new Date()
+							}
+					}
+			)
+			return res
+	}
+	
+	async function HaveVotes(userID, postID){
+			try {
+					const lastVote = await getLastVote(userID,postID)
+			}catch (e) {
+					if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
+									return false
+					} else {
+							throw e
+					}
+			}
+	}
+	
+\end{lstlisting}
+
+\chapter{Layout компонентийг App компонент дээр ашиглах}
+\label{appendix:layout-component}
+
+\begin{lstlisting}[language=Javascript, frame=single]
+	import "../styles/globals.css";
+	import "../styles/main.css";
+	import { Layout } from "../components/Layout";
+	import { Rubik } from "@next/font/google";
+	
+	const rubik = Rubik({
+		subsets: ["cyrillic-ext", "cyrillic", "latin", "latin-ext"],
+		variable: "--font-rubik",
+	});
+	
+	function MyApp({ Component, pageProps }) {
+		return (
+			<main className={`${rubik.variable} font-sans`}>
+				<Layout>
+					<Component {...pageProps} />
+				</Layout>
+			</main>
+		);
+	}
+	
+	export default MyApp;
+	
+\end{lstlisting}
