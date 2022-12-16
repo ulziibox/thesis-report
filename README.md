@@ -12,7 +12,7 @@
 
 1. VSCode дээрээ [Latex Workshop](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop) extension
 2. Үйлдлийн систем дээрээ [MiKTeX Console](https://miktex.org/) програмыг
-3. VSCode дээрээ дурын `.pdf` файлыг уншигч нэмэлтийг суулгаж ажиллуулж болно
+3. VSCode дээрээ дурын `.pdf` файл уншигч нэмэлтийг суулгаж ажиллуулж болно
 
 Хэрэв [Overleaf](https://overleaf.com/) гэсэн онлайн Latex эдитор ашиглах гэж байгаа бол
 
